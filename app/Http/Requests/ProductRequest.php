@@ -20,7 +20,8 @@ class ProductRequest extends FormRequest
         ];
 
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $rules['code'] = 'required|string|max:50|unique:products,code,' . $this->route('product');
+            $product = $this->route('product');
+            $rules['code'] = 'required|string|max:50|unique:products,code,' . $product->id;
         }
 
         return $rules;
