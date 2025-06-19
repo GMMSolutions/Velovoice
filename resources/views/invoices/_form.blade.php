@@ -167,31 +167,65 @@ document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('products-container');
     const template = document.getElementById('product-template').innerHTML;
     const addButton = document.getElementById('add-product');
-    let productIndex = 0;
-
+    
+    // Initialize product index based on existing rows
+    let productIndex = document.querySelectorAll('.product-row').length;
+    
     // Add product row
     function addProductRow(data = {}) {
         const index = productIndex++;
         let html = template.replace(/__index__/g, index);
         
         const row = document.createElement('div');
-        row.innerHTML = html;
+        row.classList.add('product-row', 'mb-3', 'border-bottom', 'pb-3');
+        row.innerHTML = `
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <select class="form-select product-select" name="products[${index}][product_id]" required>
+                        <option value="" selected disabled>Select a product</option>
+                        @foreach($products as $product)
+                            <option value="{{ $product->id }}" data-price="{{ $product->unit_price }}">
+                                {{ $product->name }} ({{ $product->code }}) - {{ number_format($product->unit_price, 2) }} €
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" min="1" value="1" class="form-control quantity" 
+                           name="products[${index}][quantity]" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control price" readonly>
+                </div>
+                <div class="col-md-2 d-flex align-items-center">
+                    <button type="button" class="btn btn-sm btn-danger remove-product">
+                        <i class="bi bi-trash"></i> Remove
+                    </button>
+                </div>
+            </div>`;
+        
+        container.appendChild(row);
         
         // Set values if provided
         if (data.product_id) {
             const select = row.querySelector('.product-select');
-            select.value = data.product_id;
-            updatePrice(row);
+            if (select) {
+                select.value = data.product_id;
+                updatePrice(row);
+            }
         }
         
         if (data.quantity) {
-            row.querySelector('.quantity').value = data.quantity;
+            const quantityInput = row.querySelector('.quantity');
+            if (quantityInput) {
+                quantityInput.value = data.quantity;
+                updatePrice(row);
+            }
         }
         
-        container.appendChild(row.firstElementChild);
-        
         // Add event listeners to the new row
-        addRowEventListeners(row.firstElementChild);
+        addRowEventListeners(row);
+        return row;
     }
     
     // Update price when product or quantity changes
@@ -214,25 +248,38 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add event listeners to a row
     function addRowEventListeners(row) {
+        if (!row) return;
+        
         const select = row.querySelector('.product-select');
         const quantityInput = row.querySelector('.quantity');
         const removeButton = row.querySelector('.remove-product');
         
-        if (select) {
-            select.addEventListener('change', () => updatePrice(row));
+        // Remove any existing event listeners to prevent duplicates
+        const newSelect = select.cloneNode(true);
+        select.parentNode.replaceChild(newSelect, select);
+        
+        const newQuantityInput = quantityInput.cloneNode(true);
+        quantityInput.parentNode.replaceChild(newQuantityInput, quantityInput);
+        
+        // Add new event listeners
+        if (newSelect) {
+            newSelect.addEventListener('change', () => updatePrice(row));
         }
         
-        if (quantityInput) {
-            quantityInput.addEventListener('input', () => updatePrice(row));
+        if (newQuantityInput) {
+            newQuantityInput.addEventListener('input', () => updatePrice(row));
         }
         
         if (removeButton) {
-            removeButton.addEventListener('click', (e) => {
+            // Clone the button to remove existing event listeners
+            const newRemoveButton = removeButton.cloneNode(true);
+            removeButton.parentNode.replaceChild(newRemoveButton, removeButton);
+            
+            newRemoveButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation(); // Prevent event bubbling
+                e.stopPropagation();
                 if (confirm('Are you sure you want to remove this product?')) {
                     row.remove();
-                    // Rename all form fields to maintain proper array indexing
                     updateProductRowIndexes();
                 }
             });
@@ -258,13 +305,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Add product button click handler
-    addButton.addEventListener('click', () => {
-        addProductRow();
-    });
+    if (addButton) {
+        addButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            addProductRow();
+        });
+    }
     
     // Add initial product row if empty and not editing
     @if(!isset($invoice) || $invoice->orders->count() === 0)
-        if (container.children.length === 0) {
+        if (container && container.children.length === 0) {
             addProductRow();
         }
     @endif
@@ -273,6 +323,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.product-row').forEach(row => {
         addRowEventListeners(row);
     });
+    
+    // Update price when page loads for existing rows
+    document.querySelectorAll('.product-row').forEach(row => {
+        updatePrice(row);
+    });
+    
 });
 </script>
 @endpush
