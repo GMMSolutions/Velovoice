@@ -17,7 +17,7 @@
                     <label for="status" class="form-label">Status *</label>
                     <select class="form-select @error('status') is-invalid @enderror" 
                             id="status" name="status" required>
-                        <option value="" disabled {{ !isset($client->status) ? 'selected' : '' }}>Select status</option>
+                        <option value="" disabled {{ old('status', $client->status ?? '') == '' ? 'selected' : '' }}>Select status</option>
                         <option value="Indépendant" {{ old('status', $client->status ?? '') == 'Indépendant' ? 'selected' : '' }}>Indépendant</option>
                         <option value="Société" {{ old('status', $client->status ?? '') == 'Société' ? 'selected' : '' }}>Société</option>
                     </select>
@@ -151,11 +151,10 @@
         // Set initial state
         toggleSocietyField();
         
-        // Add event listeners
+        // Add change event listener
         const statusSelect = document.getElementById('status');
         if (statusSelect) {
             statusSelect.addEventListener('change', toggleSocietyField);
-            statusSelect.addEventListener('input', toggleSocietyField);
         }
     });
 </script>
