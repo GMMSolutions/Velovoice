@@ -218,19 +218,43 @@ document.addEventListener('DOMContentLoaded', function() {
         const quantityInput = row.querySelector('.quantity');
         const removeButton = row.querySelector('.remove-product');
         
-        select.addEventListener('change', () => updatePrice(row));
-        quantityInput.addEventListener('input', () => updatePrice(row));
+        if (select) {
+            select.addEventListener('change', () => updatePrice(row));
+        }
+        
+        if (quantityInput) {
+            quantityInput.addEventListener('input', () => updatePrice(row));
+        }
         
         if (removeButton) {
             removeButton.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation(); // Prevent event bubbling
                 if (confirm('Are you sure you want to remove this product?')) {
                     row.remove();
-                    // Update price totals if needed
-                    updatePrice(row);
+                    // Rename all form fields to maintain proper array indexing
+                    updateProductRowIndexes();
                 }
             });
         }
+    }
+    
+    // Update product row indexes to maintain proper array indexing
+    function updateProductRowIndexes() {
+        document.querySelectorAll('.product-row').forEach((row, index) => {
+            // Update product ID field
+            const productSelect = row.querySelector('.product-select');
+            if (productSelect) {
+                productSelect.name = `products[${index}][product_id]`;
+            }
+            
+            // Update quantity field
+            const quantityInput = row.querySelector('.quantity');
+            if (quantityInput) {
+                quantityInput.name = `products[${index}][quantity]`;
+            }
+        });
+    }
     }
     
     // Add product button click handler
@@ -245,19 +269,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     @endif
     
-    // Load existing products for edit
-    @if(isset($invoice) && $invoice->orders->count() > 0)
-        @foreach($invoice->orders as $order)
-            addProductRow({
-                product_id: '{{ $order->product_id }}',
-                quantity: '{{ $order->quantity }}'
-            });
-        @endforeach
-        // Remove the initial empty row
-        if (container.children.length > {{ $invoice->orders->count() }}) {
-            container.removeChild(container.children[0]);
-        }
-    @endif
+    // Initialize event listeners for existing rows
+    document.querySelectorAll('.product-row').forEach(row => {
+        addRowEventListeners(row);
     });
+});
 </script>
 @endpush
