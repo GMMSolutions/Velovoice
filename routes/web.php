@@ -41,4 +41,8 @@ Route::middleware('auth')->group(function () {
     
     // Client Routes
     Route::resource('clients', \App\Http\Controllers\ClientController::class);
+    
+    // Invoice Routes
+    Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
+    Route::get('api/products/{product}', [\App\Http\Controllers\InvoiceController::class, 'getProduct'])->name('api.products.show');
 });
