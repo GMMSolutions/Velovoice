@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <div class="mb-3" id="society-field" style="display: {{ old('status', $client->status ?? '') == 'Société' ? 'block' : 'none' }};">
+        <div class="mb-3" id="society-field" style="display: none;">
             <label for="society" class="form-label">Society Name</label>
             <input type="text" class="form-control @error('society') is-invalid @enderror" 
                    id="society" name="society" 
@@ -126,27 +126,37 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    // Function to toggle society field visibility
+    function toggleSocietyField() {
         const statusSelect = document.getElementById('status');
         const societyField = document.getElementById('society-field');
         const societyInput = document.getElementById('society');
-
-        function toggleSocietyField() {
-            if (statusSelect.value === 'Société') {
-                societyField.style.display = 'block';
-                societyInput.required = true;
-            } else {
-                societyField.style.display = 'none';
+        
+        if (!statusSelect || !societyField) return;
+        
+        if (statusSelect.value === 'Société') {
+            societyField.style.display = 'block';
+            if (societyInput) societyInput.required = true;
+        } else {
+            societyField.style.display = 'none';
+            if (societyInput) {
                 societyInput.required = false;
-                societyInput.value = ''; // Clear the society field when hidden
+                societyInput.value = '';
             }
         }
+    }
 
-        // Initialize on page load
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set initial state
         toggleSocietyField();
         
-        // Add change event listener
-        statusSelect.addEventListener('change', toggleSocietyField);
+        // Add event listeners
+        const statusSelect = document.getElementById('status');
+        if (statusSelect) {
+            statusSelect.addEventListener('change', toggleSocietyField);
+            statusSelect.addEventListener('input', toggleSocietyField);
+        }
     });
 </script>
 @endpush
