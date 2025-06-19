@@ -36,5 +36,6 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
     
-    // Add more protected routes here as needed
+    // Product Routes
+    Route::resource('products', \App\Http\Controllers\ProductController::class);
 });
