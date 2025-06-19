@@ -10,7 +10,7 @@ use App\Http\Requests\InvoiceRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class InvoiceController extends Controller
 {
