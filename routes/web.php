@@ -14,11 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Public routes
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
@@ -32,9 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Home route (invoices list)
+    Route::get('/', [\App\Http\Controllers\InvoiceController::class, 'index'])->name('home');
     
     // Product Routes
     Route::resource('products', \App\Http\Controllers\ProductController::class);

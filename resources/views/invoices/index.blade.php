@@ -41,9 +41,9 @@
                                 @endphp
                                 <span class="badge {{ $statusClasses }}">{{ ucfirst($invoice->status) }}</span>
                             </td>
-                            <td class="{{ now()->gt($invoice->due_date) && $invoice->status !== 'paid' ? 'text-danger fw-bold' : '' }}">
-                                {{ $invoice->due_date->format('d/m/Y') }}
-                                @if(now()->gt($invoice->due_date) && $invoice->status !== 'paid')
+                            <td class="{{ $invoice->due_date && now()->gt($invoice->due_date) && $invoice->status !== 'paid' ? 'text-danger fw-bold' : '' }}">
+                                {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : 'N/A' }}
+                                @if($invoice->due_date && now()->gt($invoice->due_date) && $invoice->status !== 'paid')
                                     <span class="badge bg-danger ms-1">Overdue</span>
                                 @endif
                             </td>
