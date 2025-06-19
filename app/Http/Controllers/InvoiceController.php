@@ -10,6 +10,7 @@ use App\Http\Requests\InvoiceRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -131,11 +132,17 @@ class InvoiceController extends Controller
 
     public function getProduct(Product $product)
     {
-        return response()->json([
-            'id' => $product->id,
-            'name' => $product->name,
-            'unit_price' => $product->unit_price,
-            'code' => $product->code,
+        return response()->json($product);
+    }
+
+    public function download(Invoice $invoice)
+    {
+        $invoice->load(['client', 'orders.product']);
+        
+        $pdf = PDF::loadView('invoices.pdf', [
+            'invoice' => $invoice
         ]);
+        
+        return $pdf->download('invoice-' . $invoice->code . '.pdf');
     }
 }

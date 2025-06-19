@@ -51,16 +51,19 @@
                             <td>{{ number_format($invoice->total, 2) }} €</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ route('invoices.download', $invoice) }}" class="btn btn-sm btn-outline-primary" title="Download PDF">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                    <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-outline-secondary" title="View">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-outline-secondary">
+                                    <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this invoice?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

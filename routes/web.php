@@ -44,5 +44,6 @@ Route::middleware('auth')->group(function () {
     
     // Invoice Routes
     Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
+    Route::get('invoices/{invoice}/download', [\App\Http\Controllers\InvoiceController::class, 'download'])->name('invoices.download');
     Route::get('api/products/{product}', [\App\Http\Controllers\InvoiceController::class, 'getProduct'])->name('api.products.show');
 });
