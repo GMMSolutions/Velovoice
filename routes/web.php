@@ -38,4 +38,7 @@ Route::middleware('auth')->group(function () {
     
     // Product Routes
     Route::resource('products', \App\Http\Controllers\ProductController::class);
+    
+    // Client Routes
+    Route::resource('clients', \App\Http\Controllers\ClientController::class);
 });
