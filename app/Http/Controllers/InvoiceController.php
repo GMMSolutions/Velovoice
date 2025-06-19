@@ -75,7 +75,7 @@ class InvoiceController extends Controller
 
     public function edit(Invoice $invoice): View
     {
-        $invoice->load('orders');
+        $invoice->load(['client', 'orders.product']);
         $clients = Client::orderBy('lastname')->get();
         $products = Product::orderBy('name')->get();
         

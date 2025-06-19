@@ -66,7 +66,38 @@
     </div>
     <div class="card-body">
         <div id="products-container">
-            <!-- Product rows will be added here -->
+            @if(isset($invoice) && $invoice->orders->count() > 0)
+                @foreach($invoice->orders as $index => $order)
+                    <div class="product-row mb-3 border-bottom pb-3">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <select class="form-select product-select" name="products[{{ $index }}][product_id]" required>
+                                    <option value="" disabled>Select a product</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}" 
+                                            data-price="{{ $product->unit_price }}"
+                                            {{ $order->product_id == $product->id ? 'selected' : '' }}>
+                                            {{ $product->name }} ({{ $product->code }}) - {{ number_format($product->unit_price, 2) }} €
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" min="1" value="{{ $order->quantity }}" class="form-control quantity" 
+                                       name="products[{{ $index }}][quantity]" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control price" value="{{ number_format($order->quantity * $order->product->unit_price, 2) }} €" readonly>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-center">
+                                <button type="button" class="btn btn-sm btn-danger remove-product">
+                                    <i class="bi bi-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
     </div>
 </div>
@@ -91,9 +122,9 @@
             <div class="col-md-3">
                 <input type="text" class="form-control price" readonly>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 d-flex align-items-center">
                 <button type="button" class="btn btn-sm btn-danger remove-product">
-                    <i class="bi bi-trash"></i>
+                    <i class="bi bi-trash"></i> Remove
                 </button>
             </div>
         </div>
@@ -191,8 +222,13 @@ document.addEventListener('DOMContentLoaded', function() {
         quantityInput.addEventListener('input', () => updatePrice(row));
         
         if (removeButton) {
-            removeButton.addEventListener('click', () => {
-                row.remove();
+            removeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (confirm('Are you sure you want to remove this product?')) {
+                    row.remove();
+                    // Update price totals if needed
+                    updatePrice(row);
+                }
             });
         }
     }
@@ -202,10 +238,12 @@ document.addEventListener('DOMContentLoaded', function() {
         addProductRow();
     });
     
-    // Add initial product row if empty
-    if (container.children.length === 0) {
-        addProductRow();
-    }
+    // Add initial product row if empty and not editing
+    @if(!isset($invoice) || $invoice->orders->count() === 0)
+        if (container.children.length === 0) {
+            addProductRow();
+        }
+    @endif
     
     // Load existing products for edit
     @if(isset($invoice) && $invoice->orders->count() > 0)
