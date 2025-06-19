@@ -66,22 +66,22 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="street_number" class="form-label">Street Number *</label>
-                    <input type="text" class="form-control @error('street_number') is-invalid @enderror" 
-                           id="street_number" name="street_number" 
-                           value="{{ old('street_number', $client->street_number ?? '') }}" required>
-                    @error('street_number')
+                    <label for="street" class="form-label">Street *</label>
+                    <input type="text" class="form-control @error('street') is-invalid @enderror" 
+                           id="street" name="street" 
+                           value="{{ old('street', $client->street ?? '') }}" required>
+                    @error('street')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="street" class="form-label">Street *</label>
-                    <input type="text" class="form-control @error('street') is-invalid @enderror" 
-                           id="street" name="street" 
-                           value="{{ old('street', $client->street ?? '') }}" required>
-                    @error('street')
+                    <label for="street_number" class="form-label">Street Number *</label>
+                    <input type="text" class="form-control @error('street_number') is-invalid @enderror" 
+                           id="street_number" name="street_number" 
+                           value="{{ old('street_number', $client->street_number ?? '') }}" required>
+                    @error('street_number')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -130,9 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const societyField = document.getElementById('society-field');
     const societyInput = document.getElementById('society');
     
-    function toggleSocietyField() {
-        console.log('Status changed to:', statusSelect.value); // Debug line
-        
+    function toggleSocietyField() {        
         if (statusSelect.value === 'Société') {
             societyField.style.display = 'block';
             societyInput.required = true;
