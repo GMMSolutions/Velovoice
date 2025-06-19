@@ -88,14 +88,29 @@
             </div>
         </div>
 
-        <div class="mb-3">
-            <label for="CP" class="form-label">Postal Code *</label>
-            <input type="text" class="form-control @error('CP') is-invalid @enderror" 
-                   id="CP" name="CP" 
-                   value="{{ old('CP', $client->CP ?? '') }}" required>
-            @error('CP')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="CP" class="form-label">Postal Code *</label>
+                    <input type="text" class="form-control @error('CP') is-invalid @enderror" 
+                           id="CP" name="CP" 
+                           value="{{ old('CP', $client->CP ?? '') }}" required>
+                    @error('CP')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="city" class="form-label">City *</label>
+                    <input type="text" class="form-control @error('city') is-invalid @enderror" 
+                           id="city" name="city" 
+                           value="{{ old('city', $client->city ?? '') }}" required>
+                    @error('city')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
         </div>
 
         <div class="d-flex justify-content-between">
@@ -123,12 +138,15 @@
             } else {
                 societyField.style.display = 'none';
                 societyInput.required = false;
+                societyInput.value = ''; // Clear the society field when hidden
             }
         }
 
-
-        statusSelect.addEventListener('change', toggleSocietyField);
+        // Initialize on page load
         toggleSocietyField();
+        
+        // Add change event listener
+        statusSelect.addEventListener('change', toggleSocietyField);
     });
 </script>
 @endpush

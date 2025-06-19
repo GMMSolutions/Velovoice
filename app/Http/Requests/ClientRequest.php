@@ -21,6 +21,7 @@ class ClientRequest extends FormRequest
             'society' => 'nullable|string|max:255',
             'street' => 'required|string|max:255',
             'CP' => 'required|string|max:20',
+            'city' => 'required|string|max:100',
             'street_number' => 'required|string|max:20',
         ];
     }

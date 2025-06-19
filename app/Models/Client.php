@@ -17,6 +17,7 @@ class Client extends Model
         'society',
         'street',
         'CP',
+        'city',
         'street_number',
     ];
 

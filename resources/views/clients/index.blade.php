@@ -29,7 +29,7 @@
                                 <td>{{ $client->firstname }} {{ $client->lastname }}</td>
                                 <td>{{ $client->status }}</td>
                                 <td>{{ $client->society ?? '-' }}</td>
-                                <td>{{ $client->street_number }} {{ $client->street }}, {{ $client->CP }}</td>
+                                <td>{{ $client->street_number }} {{ $client->street }}, {{ $client->CP }} {{ $client->city }}</td>
                                 <td class="text-end">
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('clients.edit', $client) }}" class="btn btn-sm btn-outline-secondary">
