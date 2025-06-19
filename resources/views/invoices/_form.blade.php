@@ -220,6 +220,6 @@ document.addEventListener('DOMContentLoaded', function() {
             container.removeChild(container.children[0]);
         }
     @endif
-});
+    });
 </script>
 @endpush
